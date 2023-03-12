@@ -12,7 +12,9 @@ enum Direction {
     FORWARD,
     BACKWARD,
     LEFT,
-    RIGHT
+    RIGHT,
+    UP,
+    DOWN
 };
 
 class Camera {
@@ -60,6 +62,12 @@ public:
            }break;
            case RIGHT: {
                 Position += Right * velocity;
+           }break;
+           case UP: {
+               Position += Up * velocity;
+           }break;
+           case DOWN: {
+               Position -= Up * velocity;
            }break;
        }
     }
