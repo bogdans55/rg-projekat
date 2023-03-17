@@ -268,12 +268,19 @@ int main() {
     stbi_set_flip_vertically_on_load(false);
     vector<std::string> faces
             {
-                    FileSystem::getPath("resources/textures/skybox_night/right.jpg"),
-                    FileSystem::getPath("resources/textures/skybox_night/left.jpg"),
-                    FileSystem::getPath("resources/textures/skybox_night/top.jpg"),
-                    FileSystem::getPath("resources/textures/skybox_night/bottom.jpg"),
-                    FileSystem::getPath("resources/textures/skybox_night/front.jpg"),
-                    FileSystem::getPath("resources/textures/skybox_night/back.jpg")
+                    FileSystem::getPath("resources/textures/skybox_day/right.jpg"),
+                    FileSystem::getPath("resources/textures/skybox_day/left.jpg"),
+                    FileSystem::getPath("resources/textures/skybox_day/top.jpg"),
+                    FileSystem::getPath("resources/textures/skybox_day/bottom.jpg"),
+                    FileSystem::getPath("resources/textures/skybox_day/front.jpg"),
+                    FileSystem::getPath("resources/textures/skybox_day/back.jpg")
+
+//                    FileSystem::getPath("resources/textures/skybox_night/right.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox_night/left.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox_night/top.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox_night/bottom.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox_night/front.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox_night/back.jpg")
             };
     unsigned int cubemapTexture = loadCubemap(faces);
 
