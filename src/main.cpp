@@ -216,23 +216,23 @@ int main() {
 
     float squareVertices[] = {
             // positions          // texture Coords
-            1.0f, 0.0f,  1.0f,  2.0f, 0.0f,
+            1.0f, 0.0f,  1.0f,  1.0f, 0.0f,
             -1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
-            -1.0f, 0.0f, -1.0f,  0.0f, 2.0f,
+            -1.0f, 0.0f, -1.0f,  0.0f, 1.0f,
 
-            1.0f, 0.0f,  1.0f,  2.0f, 0.0f,
-            -1.0f, 0.0f, -1.0f,  0.0f, 2.0f,
-            1.0f, 0.0f, -1.0f,  2.0f, 2.0f
+            1.0f, 0.0f,  1.0f,  1.0f, 0.0f,
+            -1.0f, 0.0f, -1.0f,  0.0f, 1.0f,
+            1.0f, 0.0f, -1.0f,  1.0f, 1.0f
     };
 
     // load models
     // -----------
-    Model ourModel("resources/objects/backpack/backpack.obj");
+    Model ourModel("resources/objects/trees/OBJ_CL04_CalocedrusDecurrens_1.obj");
     ourModel.SetShaderTextureNamePrefix("material.");
 
     PointLight& pointLight = programState->pointLight;
-    pointLight.position = glm::vec3(4.0f, 4.0, 0.0);
-    pointLight.ambient = glm::vec3(0.1, 0.1, 0.1);
+    pointLight.position = glm::vec3(0.0, 4.0, 0.0);
+    pointLight.ambient = glm::vec3(0.4, 0.4, 0.4);
     pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
     pointLight.specular = glm::vec3(1.0, 1.0, 1.0);
 
@@ -273,7 +273,7 @@ int main() {
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 
     // load textures
-    unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass.jpg").c_str());
+    unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass1.jpg").c_str());
     unsigned int tarmacTexture = loadTexture(FileSystem::getPath("resources/textures/tarmac.jpg").c_str());
 
     // skybox textures
@@ -327,7 +327,7 @@ int main() {
 
         // don't forget to enable shader before setting uniforms
         ourShader.use();
-        pointLight.position = glm::vec3(3.0, 3.0, 3.0);
+        pointLight.position = glm::vec3(0.0, 4.0, 0.0);
         ourShader.setVec3("pointLight.position", pointLight.position);
         ourShader.setVec3("pointLight.ambient", pointLight.ambient);
         ourShader.setVec3("pointLight.diffuse", pointLight.diffuse);
@@ -346,11 +346,10 @@ int main() {
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model,
-                               programState->backpackPosition); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(programState->backpackScale));    // it's a bit too big for our scene, so scale it down
+        model = glm::translate(model,programState->backpackPosition);
+        model = glm::scale(model, glm::vec3(programState->backpackScale));
         ourShader.setMat4("model", model);
-//        ourModel.Draw(ourShader);
+        ourModel.Draw(ourShader);
 
         // draw skybox
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -393,6 +392,7 @@ int main() {
         textureShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
+//        glBindTexture(GL_TEXTURE_2D, 0);
 
         if (programState->ImGuiEnabled)
             DrawImGui(programState);
@@ -414,8 +414,10 @@ int main() {
     // deallocate
     glDeleteVertexArrays(1, &skyboxVAO);
     glDeleteVertexArrays(1, &planeVAO);
+    glDeleteVertexArrays(1, &trackVAO);
     glDeleteBuffers(1, &skyboxVAO);
     glDeleteBuffers(1, &planeVAO);
+    glDeleteBuffers(1, &trackVAO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
