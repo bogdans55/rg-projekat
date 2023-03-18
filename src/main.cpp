@@ -214,15 +214,15 @@ int main() {
             1.0f, -1.0f,  1.0f
     };
 
-    float planeVertices[] = {
+    float squareVertices[] = {
             // positions          // texture Coords
-            5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-            -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
-            -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+            1.0f, 0.0f,  1.0f,  2.0f, 0.0f,
+            -1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+            -1.0f, 0.0f, -1.0f,  0.0f, 2.0f,
 
-            5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
-            -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
-            5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+            1.0f, 0.0f,  1.0f,  2.0f, 0.0f,
+            -1.0f, 0.0f, -1.0f,  0.0f, 2.0f,
+            1.0f, 0.0f, -1.0f,  2.0f, 2.0f
     };
 
     // load models
@@ -255,7 +255,18 @@ int main() {
     glGenBuffers(1, &planeVBO);
     glBindVertexArray(planeVAO);
     glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), &planeVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(squareVertices), &squareVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    // track VAO
+    unsigned int trackVAO, trackVBO;
+    glGenVertexArrays(1, &trackVAO);
+    glGenBuffers(1, &trackVBO);
+    glBindVertexArray(trackVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, trackVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(squareVertices), &squareVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
@@ -263,6 +274,7 @@ int main() {
 
     // load textures
     unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass.jpg").c_str());
+    unsigned int tarmacTexture = loadTexture(FileSystem::getPath("resources/textures/tarmac.jpg").c_str());
 
     // skybox textures
     stbi_set_flip_vertically_on_load(false);
@@ -338,7 +350,7 @@ int main() {
                                programState->backpackPosition); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(programState->backpackScale));    // it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", model);
-        ourModel.Draw(ourShader);
+//        ourModel.Draw(ourShader);
 
         // draw skybox
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -359,11 +371,25 @@ int main() {
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
         model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(5.0f, 1.0f, 5.0f));
+        model = glm::scale(model, glm::vec3(25.0f, 1.0f, 25.0f));
         textureShader.setMat4("projection", projection);
         textureShader.setMat4("view", view);
         glBindVertexArray(planeVAO);
         glBindTexture(GL_TEXTURE_2D, planeTexture);
+        textureShader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        // draw track
+        textureShader.use();
+        projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        view = programState->camera.GetViewMatrix();
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.001f, 0.0f));
+        model = glm::scale(model, glm::vec3(10.0f, 1.0f, 2.0f));
+        textureShader.setMat4("projection", projection);
+        textureShader.setMat4("view", view);
+        glBindVertexArray(trackVAO);
+        glBindTexture(GL_TEXTURE_2D, tarmacTexture);
         textureShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
