@@ -168,6 +168,7 @@ int main() {
     Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
     Shader textureShader("resources/shaders/texture.vs", "resources/shaders/texture.fs");
+    Shader colorShader("resources/shaders/color.vs", "resources/shaders/color.fs");
 
     float skyboxVertices[] = {
             // positions
@@ -232,7 +233,7 @@ int main() {
 
     PointLight& pointLight = programState->pointLight;
     pointLight.position = glm::vec3(0.0, 4.0, 0.0);
-    pointLight.ambient = glm::vec3(0.4, 0.4, 0.4);
+    pointLight.ambient = glm::vec3(1);
     pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
     pointLight.specular = glm::vec3(1.0, 1.0, 1.0);
 
@@ -274,7 +275,7 @@ int main() {
 
     // load textures
     unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass1.jpg").c_str());
-    unsigned int tarmacTexture = loadTexture(FileSystem::getPath("resources/textures/tarmac.jpg").c_str());
+//    unsigned int tarmacTexture = loadTexture(FileSystem::getPath("resources/textures/tarmac.jpg").c_str());
 
     // skybox textures
     stbi_set_flip_vertically_on_load(false);
@@ -349,7 +350,7 @@ int main() {
         model = glm::translate(model,programState->backpackPosition);
         model = glm::scale(model, glm::vec3(programState->backpackScale));
         ourShader.setMat4("model", model);
-        ourModel.Draw(ourShader);
+//        ourModel.Draw(ourShader);
 
         // draw skybox
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -379,17 +380,32 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // draw track
-        textureShader.use();
+        colorShader.use();
+        colorShader.setVec3("objectColor", 0.5, 0.5, 0.5);
+        colorShader.setVec3("light.position", pointLight.position);
+        colorShader.setVec3("viewPos", programState->camera.Position);
+        colorShader.setVec3("aNormal", 0.0, 1.0, 0.0);
+        // light properties
+        glm::vec3 lightColor = glm::vec3(1.0f);
+        colorShader.setVec3("light.ambient", pointLight.ambient);
+        colorShader.setVec3("light.diffuse", pointLight.diffuse);
+        colorShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+        // material properties
+        colorShader.setVec3("material.ambient", 0.2f, 0.2f, 0.2f);
+        colorShader.setVec3("material.diffuse", 0.1f, 0.1f, 0.1f);
+        colorShader.setVec3("material.specular", 0.2f, 0.2f, 0.2f);
+        colorShader.setFloat("material.shininess", 10.0f);
+        // positioning
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.001f, 0.0f));
         model = glm::scale(model, glm::vec3(10.0f, 1.0f, 2.0f));
-        textureShader.setMat4("projection", projection);
-        textureShader.setMat4("view", view);
+        colorShader.setMat4("projection", projection);
+        colorShader.setMat4("view", view);
         glBindVertexArray(trackVAO);
-        glBindTexture(GL_TEXTURE_2D, tarmacTexture);
-        textureShader.setMat4("model", model);
+//        glBindTexture(GL_TEXTURE_2D, tarmacTexture);
+        colorShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
 //        glBindTexture(GL_TEXTURE_2D, 0);
