@@ -389,7 +389,7 @@ int main() {
         glm::vec3 lightColor = glm::vec3(1.0f);
         colorShader.setVec3("light.ambient", pointLight.ambient);
         colorShader.setVec3("light.diffuse", pointLight.diffuse);
-        colorShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+        colorShader.setVec3("light.specular", pointLight.specular);
         // material properties
         colorShader.setVec3("material.ambient", 0.2f, 0.2f, 0.2f);
         colorShader.setVec3("material.diffuse", 0.1f, 0.1f, 0.1f);
