@@ -297,12 +297,12 @@ int main() {
             };
     unsigned int cubemapTexture = loadCubemap(faces);
 
-    // shader configuration
+//    shader configuration
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
-
-    textureShader.use();
-    textureShader.setInt("texture1", 0);
+//
+//    textureShader.use();
+//    textureShader.setInt("texture1", 0);
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -347,10 +347,10 @@ int main() {
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model,programState->backpackPosition);
-        model = glm::scale(model, glm::vec3(programState->backpackScale));
+//        model = glm::translate(model,programState->backpackPosition);
+        model = glm::scale(model, glm::vec3(0.01f));
         ourShader.setMat4("model", model);
-//        ourModel.Draw(ourShader);
+        ourModel.Draw(ourShader);
 
         // draw skybox
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -371,13 +371,14 @@ int main() {
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
         model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(25.0f, 1.0f, 25.0f));
+        model = glm::scale(model, glm::vec3(50.0f, 1.0f, 50.0f));
         textureShader.setMat4("projection", projection);
         textureShader.setMat4("view", view);
         glBindVertexArray(planeVAO);
         glBindTexture(GL_TEXTURE_2D, planeTexture);
         textureShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
+//        glBindTexture(GL_TEXTURE_2D, 0);
 
         // draw track
         colorShader.use();
@@ -404,11 +405,8 @@ int main() {
         colorShader.setMat4("projection", projection);
         colorShader.setMat4("view", view);
         glBindVertexArray(trackVAO);
-//        glBindTexture(GL_TEXTURE_2D, tarmacTexture);
         colorShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-
-//        glBindTexture(GL_TEXTURE_2D, 0);
 
         if (programState->ImGuiEnabled)
             DrawImGui(programState);
