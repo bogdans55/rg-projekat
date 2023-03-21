@@ -228,7 +228,7 @@ int main() {
 
     // load models
     // -----------
-    Model ourModel("resources/objects/trees/OBJ_CL04_CalocedrusDecurrens_1.obj");
+    Model ourModel("resources/objects/lambo/lambo.obj");
     ourModel.SetShaderTextureNamePrefix("material.");
 
     PointLight& pointLight = programState->pointLight;
@@ -347,7 +347,7 @@ int main() {
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
-//        model = glm::translate(model,programState->backpackPosition);
+        model = glm::translate(model,programState->backpackPosition);
         model = glm::scale(model, glm::vec3(0.01f));
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);

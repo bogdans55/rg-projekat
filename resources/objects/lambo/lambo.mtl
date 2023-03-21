@@ -1,0 +1,18 @@
+newmtl Lamborghini_Aventador2:BodySG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd lambo_diffuse.jpeg
+Ni 1.00
+Ks 0.00 0.00 0.00
+map_Ks lambo_spec.jpeg
+Ns 18.00
+newmtl Lamborghini_Aventador2:GlassSG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 0.06 0.06 0.06
+Ni 1.00
+Ks 0.70 0.70 0.70
+Ns 4.31
