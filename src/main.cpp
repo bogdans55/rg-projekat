@@ -228,6 +228,7 @@ int main() {
 
     // load models
     // -----------
+    stbi_set_flip_vertically_on_load(false);
     Model ourModel("resources/objects/lambo/lambo.obj");
     ourModel.SetShaderTextureNamePrefix("material.");
 
