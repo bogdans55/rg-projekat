@@ -1,0 +1,13 @@
+# Blender 3.4.1 MTL File: 'None'
+# www.blender.org
+
+newmtl wire_088144225
+Ka 1.000000 1.000000 1.000000
+Ks 0.200000 0.200000 0.200000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd low_TRAFFIC LIGHT_BaseColor.png
+map_Ns low_TRAFFIC LIGHT_Roughness.png
+map_refl low_TRAFFIC LIGHT_Metallic.png
+map_Ke low_TRAFFIC LIGHT_Emissive.png

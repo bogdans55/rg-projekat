@@ -229,8 +229,10 @@ int main() {
     // load models
     // -----------
     stbi_set_flip_vertically_on_load(false);
-    Model ourModel("resources/objects/lambo/lambo.obj");
-    ourModel.SetShaderTextureNamePrefix("material.");
+    Model lamboModel("resources/objects/lambo/lambo.obj");
+    lamboModel.SetShaderTextureNamePrefix("material.");
+    Model trafficLightModel("resources/objects/traffic_light/traffic_light.obj");
+    trafficLightModel.SetShaderTextureNamePrefix("material.");
 
     PointLight& pointLight = programState->pointLight;
     pointLight.position = glm::vec3(0.0, 4.0, 0.0);
@@ -343,15 +345,23 @@ int main() {
         glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
                                                 (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = programState->camera.GetViewMatrix();
+        glm::mat4 model = glm::mat4(1.0f);
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
 
-        // render the loaded model
-        glm::mat4 model = glm::mat4(1.0f);
+        // render the lambo
+        model = glm::mat4(1.0f);
         model = glm::translate(model,programState->backpackPosition);
         model = glm::scale(model, glm::vec3(0.01f));
         ourShader.setMat4("model", model);
-        ourModel.Draw(ourShader);
+        lamboModel.Draw(ourShader);
+
+        // render the traffic light
+        model = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(3.0, 0.0, 3.0));
+        ourShader.setMat4("model", model);
+        trafficLightModel.Draw(ourShader);
 
         // draw skybox
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
