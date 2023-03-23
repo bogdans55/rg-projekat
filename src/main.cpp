@@ -60,8 +60,8 @@ struct ProgramState {
     bool ImGuiEnabled = false;
     Camera camera;
     bool CameraMouseMovementUpdateEnabled = true;
-    glm::vec3 backpackPosition = glm::vec3(0.0f);
-    float backpackScale = 1.0f;
+    glm::vec3 position = glm::vec3(0.0f);
+    float scale = 1.0f;
     PointLight pointLight;
     ProgramState()
             : camera(glm::vec3(0.0f, 0.0f, 3.0f)) {}
@@ -73,31 +73,37 @@ struct ProgramState {
 
 void ProgramState::SaveToFile(std::string filename) {
     std::ofstream out(filename);
-    out << clearColor.r << '\n'
-        << clearColor.g << '\n'
-        << clearColor.b << '\n'
-        << ImGuiEnabled << '\n'
-        << camera.Position.x << '\n'
-        << camera.Position.y << '\n'
-        << camera.Position.z << '\n'
-        << camera.Front.x << '\n'
-        << camera.Front.y << '\n'
-        << camera.Front.z << '\n';
+    out
+            << clearColor.r << '\n'
+            << clearColor.g << '\n'
+            << clearColor.b << '\n'
+            << ImGuiEnabled << '\n'
+            << camera.Position.x << '\n'
+            << camera.Position.y << '\n'
+            << camera.Position.z << '\n'
+            << camera.Pitch << '\n'
+            << camera.Yaw << '\n'
+            << camera.Front.x << '\n'
+            << camera.Front.y << '\n'
+            << camera.Front.z << '\n';
 }
 
 void ProgramState::LoadFromFile(std::string filename) {
     std::ifstream in(filename);
     if (in) {
-        in >> clearColor.r
-           >> clearColor.g
-           >> clearColor.b
-           >> ImGuiEnabled
-           >> camera.Position.x
-           >> camera.Position.y
-           >> camera.Position.z
-           >> camera.Front.x
-           >> camera.Front.y
-           >> camera.Front.z;
+        in
+                >> clearColor.r
+                >> clearColor.g
+                >> clearColor.b
+                >> ImGuiEnabled
+                >> camera.Position.x
+                >> camera.Position.y
+                >> camera.Position.z
+                >> camera.Pitch
+                >> camera.Yaw
+                >> camera.Front.x
+                >> camera.Front.y
+                >> camera.Front.z;
     }
 }
 
@@ -278,25 +284,24 @@ int main() {
 
     // load textures
     unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass1.jpg").c_str());
-//    unsigned int tarmacTexture = loadTexture(FileSystem::getPath("resources/textures/tarmac.jpg").c_str());
 
     // skybox textures
     stbi_set_flip_vertically_on_load(false);
     vector<std::string> faces
             {
-                    FileSystem::getPath("resources/textures/skybox_day/right.jpg"),
-                    FileSystem::getPath("resources/textures/skybox_day/left.jpg"),
-                    FileSystem::getPath("resources/textures/skybox_day/top.jpg"),
-                    FileSystem::getPath("resources/textures/skybox_day/bottom.jpg"),
-                    FileSystem::getPath("resources/textures/skybox_day/front.jpg"),
-                    FileSystem::getPath("resources/textures/skybox_day/back.jpg")
+//                    FileSystem::getPath("resources/textures/skybox_day/right.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox_day/left.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox_day/top.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox_day/bottom.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox_day/front.jpg"),
+//                    FileSystem::getPath("resources/textures/skybox_day/back.jpg")
 
-//                    FileSystem::getPath("resources/textures/skybox_night/right.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox_night/left.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox_night/top.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox_night/bottom.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox_night/front.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox_night/back.jpg")
+                    FileSystem::getPath("resources/textures/skybox_night/right.jpg"),
+                    FileSystem::getPath("resources/textures/skybox_night/left.jpg"),
+                    FileSystem::getPath("resources/textures/skybox_night/top.jpg"),
+                    FileSystem::getPath("resources/textures/skybox_night/bottom.jpg"),
+                    FileSystem::getPath("resources/textures/skybox_night/front.jpg"),
+                    FileSystem::getPath("resources/textures/skybox_night/back.jpg")
             };
     unsigned int cubemapTexture = loadCubemap(faces);
 
@@ -308,7 +313,7 @@ int main() {
 //    textureShader.setInt("texture1", 0);
 
     // draw in wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // render loop
     // -----------
@@ -326,7 +331,8 @@ int main() {
 
         // render
         // ------
-        glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
+//        glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
@@ -351,7 +357,8 @@ int main() {
 
         // render the lambo
         model = glm::mat4(1.0f);
-        model = glm::translate(model,programState->backpackPosition);
+        model = glm::translate(model,glm::vec3(2.0f, 0.0f, 8.0f));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.01f));
         ourShader.setMat4("model", model);
         lamboModel.Draw(ourShader);
@@ -359,7 +366,7 @@ int main() {
         // render the traffic light
         model = glm::mat4(1.0f);
         model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::translate(model, glm::vec3(3.0, 0.0, 3.0));
+        model = glm::translate(model, glm::vec3(5.0, 0.0, -5.0));
         ourShader.setMat4("model", model);
         trafficLightModel.Draw(ourShader);
 
@@ -412,9 +419,16 @@ int main() {
         view = programState->camera.GetViewMatrix();
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.001f, 0.0f));
-        model = glm::scale(model, glm::vec3(10.0f, 1.0f, 2.0f));
+        model = glm::scale(model, glm::vec3(20.0f, 1.0f, 4.0f));
         colorShader.setMat4("projection", projection);
         colorShader.setMat4("view", view);
+        glBindVertexArray(trackVAO);
+        colorShader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.001f, 0.0f));
+        model = glm::scale(model, glm::vec3(4.0f, 1.0f, 20.0f));
         glBindVertexArray(trackVAO);
         colorShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -512,11 +526,11 @@ void DrawImGui(ProgramState *programState) {
     {
         static float f = 0.0f;
         ImGui::Begin("Hello window");
-        ImGui::Text("Hello text");
-        ImGui::SliderFloat("Float slider", &f, 0.0, 1.0);
-        ImGui::ColorEdit3("Background color", (float *) &programState->clearColor);
-        ImGui::DragFloat3("Backpack position", (float*)&programState->backpackPosition);
-        ImGui::DragFloat("Backpack scale", &programState->backpackScale, 0.05, 0.1, 4.0);
+//        ImGui::Text("Hello text");
+//        ImGui::SliderFloat("Float slider", &f, 0.0, 1.0);
+//        ImGui::ColorEdit3("Background color", (float *) &programState->clearColor);
+        ImGui::DragFloat3("Model position", (float*)&programState->position);
+        ImGui::DragFloat("Model scale", &programState->scale, 0.05, 0.1, 4.0);
 
         ImGui::DragFloat("pointLight.constant", &programState->pointLight.constant, 0.05, 0.0, 1.0);
         ImGui::DragFloat("pointLight.linear", &programState->pointLight.linear, 0.05, 0.0, 1.0);
