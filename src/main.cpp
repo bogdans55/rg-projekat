@@ -175,6 +175,7 @@ int main() {
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
     Shader textureShader("resources/shaders/texture.vs", "resources/shaders/texture.fs");
     Shader colorShader("resources/shaders/color.vs", "resources/shaders/color.fs");
+    Shader blendingShader("resources/shaders/blendingShader.vs", "resources/shaders/blendingShader.fs");
 
     float skyboxVertices[] = {
             // positions
@@ -232,6 +233,17 @@ int main() {
             1.0f, 0.0f, -1.0f,  1.0f, 1.0f
     };
 
+    float transparentVertices[] = {
+            // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+            0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+            0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
+            1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+
+            0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
+            1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
+            1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+    };
+
     // load models
     // -----------
     stbi_set_flip_vertically_on_load(false);
@@ -281,9 +293,22 @@ int main() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    // grass VAO
+    unsigned int transparentVAO, transparentVBO;
+    glGenVertexArrays(1, &transparentVAO);
+    glGenBuffers(1, &transparentVBO);
+    glBindVertexArray(transparentVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, transparentVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glBindVertexArray(0);
 
     // load textures
     unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass1.jpg").c_str());
+    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass.png").c_str());
 
     // skybox textures
     stbi_set_flip_vertically_on_load(false);
@@ -305,12 +330,45 @@ int main() {
             };
     unsigned int cubemapTexture = loadCubemap(faces);
 
+    vector<glm::vec3> vegetation;
+    for (int i = 0; i < 60; i++)
+    {
+        int rand_x = rand() % 46 + 5;
+        int rand_z = rand() % 46 + 5;
+        glm::vec3 pos = glm::vec3(rand_x, 0.5f, rand_z);
+        vegetation.push_back(pos);
+    }
+    for (int i = 0; i < 60; i++)
+    {
+        int rand_x = rand() % 46 - 50;
+        int rand_z = rand() % 46 - 50;
+        glm::vec3 pos = glm::vec3(rand_x, 0.5f, rand_z);
+        vegetation.push_back(pos);
+    }
+    for (int i = 0; i < 60; i++)
+    {
+        int rand_x = rand() % 46 + 5;
+        int rand_z = rand() % 46 - 50;
+        glm::vec3 pos = glm::vec3(rand_x, 0.5f, rand_z);
+        vegetation.push_back(pos);
+    }
+    for (int i = 0; i < 60; i++)
+    {
+        int rand_x = rand() % 46 - 50;
+        int rand_z = rand() % 46 + 5;
+        glm::vec3 pos = glm::vec3(rand_x, 0.5f, rand_z);
+        vegetation.push_back(pos);
+    }
+
 //    shader configuration
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
-//
-//    textureShader.use();
-//    textureShader.setInt("texture1", 0);
+
+    textureShader.use();
+    textureShader.setInt("texture1", 0);
+
+    blendingShader.use();
+    blendingShader.setInt("texture1", 0);
 
     // draw in wireframe
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -433,6 +491,21 @@ int main() {
         colorShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
+        blendingShader.use();
+        projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        view = programState->camera.GetViewMatrix();
+        blendingShader.setMat4("projection", projection);
+        blendingShader.setMat4("view", view);
+        glBindVertexArray(transparentVAO);
+        glBindTexture(GL_TEXTURE_2D, transparentTexture);
+        for (auto i : vegetation)
+        {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, i);
+            blendingShader.setMat4("model", model);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+
         if (programState->ImGuiEnabled)
             DrawImGui(programState);
 
@@ -454,9 +527,11 @@ int main() {
     glDeleteVertexArrays(1, &skyboxVAO);
     glDeleteVertexArrays(1, &planeVAO);
     glDeleteVertexArrays(1, &trackVAO);
+    glDeleteVertexArrays(1, &transparentVAO);
     glDeleteBuffers(1, &skyboxVAO);
     glDeleteBuffers(1, &planeVAO);
     glDeleteBuffers(1, &trackVAO);
+    glDeleteBuffers(1, &transparentVAO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
