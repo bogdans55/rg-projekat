@@ -223,7 +223,7 @@ int main() {
     };
 
     float squareVertices[] = {
-            // positions          // texture Coords
+            // positions                    // texture Coords
             1.0f, 0.0f,  1.0f,  1.0f, 0.0f,
             -1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
             -1.0f, 0.0f, -1.0f,  0.0f, 1.0f,
@@ -234,7 +234,7 @@ int main() {
     };
 
     float transparentVertices[] = {
-            // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+            // positions                    // texture Coords (swapped y coordinates because texture is flipped upside down)
             0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
             0.0f, -0.5f,  0.0f,  0.0f,  1.0f,
             1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
@@ -242,6 +242,51 @@ int main() {
             0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
             1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
             1.0f,  0.5f,  0.0f,  1.0f,  0.0f
+    };
+
+    float cubeVertices[] = {
+            // positions                        // normals                   // texture coords
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+            0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+            0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
     };
 
     // load models
@@ -283,12 +328,10 @@ int main() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     // track VAO
-    unsigned int trackVAO, trackVBO;
+    unsigned int trackVAO;
     glGenVertexArrays(1, &trackVAO);
-    glGenBuffers(1, &trackVBO);
     glBindVertexArray(trackVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, trackVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(squareVertices), &squareVertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
@@ -305,6 +348,15 @@ int main() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glBindVertexArray(0);
+    // cube VAO
+    unsigned int cubeVBO, cubeVAO;
+    glGenVertexArrays(1, &cubeVAO);
+    glGenBuffers(1, &cubeVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+    glBindVertexArray(cubeVAO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
     // load textures
     unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass1.jpg").c_str());
@@ -330,6 +382,7 @@ int main() {
             };
     unsigned int cubemapTexture = loadCubemap(faces);
 
+    // generate grass positions
     vector<glm::vec3> vegetation;
     for (int i = 0; i < 60; i++)
     {
@@ -421,10 +474,25 @@ int main() {
         ourShader.setMat4("model", model);
         lamboModel.Draw(ourShader);
 
-        // render the traffic light
+        // render the traffic lights
         model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(5.0, 0.0, 5.0));
         model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", model);
+        trafficLightModel.Draw(ourShader);
+        model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(5.0, 0.0, -5.0));
+//        model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", model);
+        trafficLightModel.Draw(ourShader);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-5.0, 0.0, 5.0));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", model);
+        trafficLightModel.Draw(ourShader);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-5.0, 0.0, -5.0));
+        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         ourShader.setMat4("model", model);
         trafficLightModel.Draw(ourShader);
 
@@ -477,20 +545,20 @@ int main() {
         view = programState->camera.GetViewMatrix();
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.001f, 0.0f));
-        model = glm::scale(model, glm::vec3(20.0f, 1.0f, 4.0f));
+        model = glm::scale(model, glm::vec3(50.0f, 1.0f, 4.0f));
         colorShader.setMat4("projection", projection);
         colorShader.setMat4("view", view);
         glBindVertexArray(trackVAO);
         colorShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.001f, 0.0f));
-        model = glm::scale(model, glm::vec3(4.0f, 1.0f, 20.0f));
+        model = glm::scale(model, glm::vec3(4.0f, 1.0f, 50.0f));
         glBindVertexArray(trackVAO);
         colorShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
+        // draw grass
         blendingShader.use();
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
