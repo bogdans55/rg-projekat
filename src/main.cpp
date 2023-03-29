@@ -169,6 +169,11 @@ int main() {
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
+    // enable face culling
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+    glFrontFace(GL_CW);
+
     // build and compile shaders
     // -------------------------
     Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
@@ -225,12 +230,12 @@ int main() {
     float squareVertices[] = {
             // positions                    // texture Coords
             1.0f, 0.0f,  1.0f,  1.0f, 0.0f,
-            -1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
             -1.0f, 0.0f, -1.0f,  0.0f, 1.0f,
+            -1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
 
             1.0f, 0.0f,  1.0f,  1.0f, 0.0f,
+            1.0f, 0.0f, -1.0f,  1.0f, 1.0f,
             -1.0f, 0.0f, -1.0f,  0.0f, 1.0f,
-            1.0f, 0.0f, -1.0f,  1.0f, 1.0f
     };
 
     float transparentVertices[] = {
@@ -568,10 +573,12 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, transparentTexture);
         for (auto i : vegetation)
         {
+            glDisable(GL_CULL_FACE);
             model = glm::mat4(1.0f);
             model = glm::translate(model, i);
             blendingShader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 6);
+            glEnable(GL_CULL_FACE);
         }
 
         if (programState->ImGuiEnabled)
