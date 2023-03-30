@@ -364,8 +364,10 @@ int main() {
     glEnableVertexAttribArray(0);
 
     // load textures
-    unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass1.jpg").c_str());
+//    unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass1.jpg").c_str());
     unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass.png").c_str());
+    unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass/aerial_grass_rock_diff_4k.jpg").c_str());
+//    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass_filtered.png").c_str());
 
     // skybox textures
     stbi_set_flip_vertically_on_load(false);
