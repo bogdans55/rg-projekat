@@ -55,6 +55,14 @@ struct PointLight {
     float quadratic;
 };
 
+struct DirLight {
+    glm::vec3 direction;
+
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+};
+
 struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
     bool ImGuiEnabled = false;
@@ -63,6 +71,7 @@ struct ProgramState {
     glm::vec3 position = glm::vec3(0.0f);
     float scale = 1.0f;
     PointLight pointLight;
+    DirLight dirLight;
     ProgramState()
             : camera(glm::vec3(0.0f, 0.0f, 3.0f)) {}
 
@@ -307,10 +316,15 @@ int main() {
     pointLight.ambient = glm::vec3(10);
     pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
     pointLight.specular = glm::vec3(1.0, 1.0, 1.0);
-
     pointLight.constant = 1.0f;
     pointLight.linear = 0.09f;
     pointLight.quadratic = 0.032f;
+
+    DirLight& dirLight = programState->dirLight;
+    dirLight.direction = glm::vec3(0.3f, -0.75f, -0.6f);
+    dirLight.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
+    dirLight.diffuse = glm::vec3(0.25f, 0.25f, 0.25f);
+    dirLight.specular = glm::vec3(0.3f, 0.3f, 0.3f);
 
     // skybox VAO
     unsigned int skyboxVAO, skyboxVBO;
@@ -482,6 +496,18 @@ int main() {
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
 
+
+        // dir light
+        ourShader.setVec3("dirLight.direction", dirLight.direction);
+        ourShader.setVec3("dirLight.ambient", dirLight.ambient);
+        ourShader.setVec3("dirLight.diffuse", dirLight.diffuse);
+        ourShader.setVec3("dirLight.specular", dirLight.specular);
+
+        ourShader.setVec3("pointLight.ambient", glm::vec3(0));
+        ourShader.setVec3("pointLight.diffuse", glm::vec3(0));
+        ourShader.setVec3("pointLight.specular", glm::vec3(0));
+
+
         // render the lambo
         model = glm::mat4(1.0f);
         model = glm::translate(model,glm::vec3(2.0f, 0.0f, 8.0f));
@@ -576,10 +602,14 @@ int main() {
 
         // draw grass
         blendingShader.use();
-        blendingShader.setVec3("pointLight.position", pointLight.position);
-        blendingShader.setVec3("pointLight.ambient", pointLight.ambient);
-        blendingShader.setVec3("pointLight.diffuse", pointLight.diffuse);
-        blendingShader.setVec3("pointLight.specular", pointLight.specular);
+        blendingShader.setVec3("dirLight.direction", dirLight.direction);
+        blendingShader.setVec3("dirLight.ambient", dirLight.ambient);
+        blendingShader.setVec3("dirLight.diffuse", dirLight.diffuse);
+        blendingShader.setVec3("dirLight.specular", dirLight.specular);
+//        blendingShader.setVec3("pointLight.position", pointLight.position);
+//        blendingShader.setVec3("pointLight.ambient", pointLight.ambient);
+//        blendingShader.setVec3("pointLight.diffuse", pointLight.diffuse);
+//        blendingShader.setVec3("pointLight.specular", pointLight.specular);
         blendingShader.setFloat("pointLight.constant", pointLight.constant);
         blendingShader.setFloat("pointLight.linear", pointLight.linear);
         blendingShader.setFloat("pointLight.quadratic", pointLight.quadratic);
@@ -701,9 +731,10 @@ void DrawImGui(ProgramState *programState) {
         ImGui::DragFloat3("Model position", (float*)&programState->position);
         ImGui::DragFloat("Model scale", &programState->scale, 0.05, 0.1, 4.0);
 
-        ImGui::DragFloat("pointLight.constant", &programState->pointLight.constant, 0.05, 0.0, 1.0);
-        ImGui::DragFloat("pointLight.linear", &programState->pointLight.linear, 0.05, 0.0, 1.0);
-        ImGui::DragFloat("pointLight.quadratic", &programState->pointLight.quadratic, 0.05, 0.0, 1.0);
+        ImGui::DragFloat3("dirLight.direction", (float*)&programState->dirLight.direction, 0.05);
+        ImGui::DragFloat3("dirLight.ambient", (float*)&programState->dirLight.ambient, 0.05, 0.0, 1.0);
+        ImGui::DragFloat3("dirLight.diffuse", (float*)&programState->dirLight.diffuse, 0.05, 0.0, 1.0);
+        ImGui::DragFloat3("dirLight.specular", (float*)&programState->dirLight.specular, 0.05, 0.0, 1.0);
         ImGui::End();
     }
 
