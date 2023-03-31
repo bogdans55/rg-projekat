@@ -229,13 +229,13 @@ int main() {
 
     float squareVertices[] = {
             // positions                    // texture Coords
-            1.0f, 0.0f,  1.0f,  1.0f, 0.0f,
-            -1.0f, 0.0f, -1.0f,  0.0f, 1.0f,
-            -1.0f, 0.0f,  1.0f,  0.0f, 0.0f,
+            1.0f, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f,  1.0f, 0.0f,
+            -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 
-            1.0f, 0.0f,  1.0f,  1.0f, 0.0f,
-            1.0f, 0.0f, -1.0f,  1.0f, 1.0f,
-            -1.0f, 0.0f, -1.0f,  0.0f, 1.0f,
+            1.0f, 0.0f,  1.0f,  0.0f, 1.0f, 0.0f,1.0f, 0.0f,
+            1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+            -1.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f,0.0f, 1.0f,
     };
 
     float transparentVertices[] = {
@@ -304,7 +304,7 @@ int main() {
 
     PointLight& pointLight = programState->pointLight;
     pointLight.position = glm::vec3(0.0, 4.0, 0.0);
-    pointLight.ambient = glm::vec3(1);
+    pointLight.ambient = glm::vec3(10);
     pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
     pointLight.specular = glm::vec3(1.0, 1.0, 1.0);
 
@@ -329,18 +329,22 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(squareVertices), &squareVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     // track VAO
     unsigned int trackVAO;
     glGenVertexArrays(1, &trackVAO);
     glBindVertexArray(trackVAO);
     glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     // grass VAO
     unsigned int transparentVAO, transparentVBO;
     glGenVertexArrays(1, &transparentVAO);
@@ -365,9 +369,10 @@ int main() {
 
     // load textures
 //    unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass1.jpg").c_str());
-    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass.png").c_str());
+//    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass.png").c_str());
     unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass/aerial_grass_rock_diff_4k.jpg").c_str());
-//    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass_filtered.png").c_str());
+    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass_filtered.png").c_str());
+//    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass_fltr.png").c_str());
 
     // skybox textures
     stbi_set_flip_vertically_on_load(false);
@@ -429,6 +434,10 @@ int main() {
 
     blendingShader.use();
     blendingShader.setInt("texture1", 0);
+
+    ourShader.use();
+    ourShader.setInt("material.diffuse", 0);
+    ourShader.setInt("material.specular", 1);
 
     // draw in wireframe
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -518,22 +527,22 @@ int main() {
         glDepthFunc(GL_LESS); // set depth function back to default
 
         // draw plane
-        textureShader.use();
+        ourShader.use();
+        glBindVertexArray(planeVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, planeTexture);
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
         model = glm::mat4(1.0f);
         model = glm::scale(model, glm::vec3(50.0f, 1.0f, 50.0f));
-        textureShader.setMat4("projection", projection);
-        textureShader.setMat4("view", view);
-        glBindVertexArray(planeVAO);
-        glBindTexture(GL_TEXTURE_2D, planeTexture);
-        textureShader.setMat4("model", model);
+        ourShader.setMat4("projection", projection);
+        ourShader.setMat4("view", view);
+        ourShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-//        glBindTexture(GL_TEXTURE_2D, 0);
 
         // draw track
         colorShader.use();
-        colorShader.setVec3("objectColor", 0.5, 0.5, 0.5);
+        colorShader.setVec3("objectColor", 0.2, 0.2, 0.2);
         colorShader.setVec3("light.position", pointLight.position);
         colorShader.setVec3("viewPos", programState->camera.Position);
         colorShader.setVec3("aNormal", 0.0, 1.0, 0.0);
@@ -567,6 +576,14 @@ int main() {
 
         // draw grass
         blendingShader.use();
+        blendingShader.setVec3("pointLight.position", pointLight.position);
+        blendingShader.setVec3("pointLight.ambient", pointLight.ambient);
+        blendingShader.setVec3("pointLight.diffuse", pointLight.diffuse);
+        blendingShader.setVec3("pointLight.specular", pointLight.specular);
+        blendingShader.setFloat("pointLight.constant", pointLight.constant);
+        blendingShader.setFloat("pointLight.linear", pointLight.linear);
+        blendingShader.setFloat("pointLight.quadratic", pointLight.quadratic);
+        blendingShader.setVec3("viewPosition", programState->camera.Position);
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
         blendingShader.setMat4("projection", projection);
