@@ -44,10 +44,14 @@ in vec2 TexCoords;
 in vec3 Normal;
 in vec3 FragPos;
 
-uniform PointLight pointLight;
+
 uniform DirLight dirLight;
 uniform SpotLight spotLight1;
 uniform SpotLight spotLight2;
+uniform PointLight pointLight1;
+uniform PointLight pointLight2;
+uniform PointLight pointLight3;
+uniform PointLight pointLight4;
 uniform Material material;
 
 uniform vec3 viewPosition;
@@ -117,9 +121,12 @@ void main()
 {
     vec3 normal = normalize(Normal);
     vec3 viewDir = normalize(viewPosition - FragPos);
-    vec3 result = CalcPointLight(pointLight, normal, FragPos, viewDir)
-                + CalcDirLight(dirLight, normal, viewDir)
-                + CalcSpotLight(spotLight1, normal, FragPos, viewDir)
-                + CalcSpotLight(spotLight2, normal, FragPos, viewDir);
+    vec3 result =  CalcDirLight(dirLight, normal, viewDir)
+                +  CalcSpotLight(spotLight1, normal, FragPos, viewDir)
+                +  CalcSpotLight(spotLight2, normal, FragPos, viewDir);
+//                 +  CalcPointLight(pointLight1, normal, FragPos, viewDir)
+//                 +  CalcPointLight(pointLight2, normal, FragPos, viewDir)
+//                 +  CalcPointLight(pointLight3, normal, FragPos, viewDir)
+//                 +  CalcPointLight(pointLight4, normal, FragPos, viewDir);
     FragColor = vec4(result, 1.0);
 }

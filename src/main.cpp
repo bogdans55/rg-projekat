@@ -548,18 +548,17 @@ int main() {
         // draw cubes for headlights
         glDisable(GL_CULL_FACE);
         lightCubeShader.use();
+        lightCubeShader.setVec3("color", glm::vec3(1.0f));
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(2.68f, 0.58f, 6.0f));
-//        model = glm::translate(model, programState->position);
         model = glm::scale(model, glm::vec3(0.1f));
         lightCubeShader.setMat4("model", model);
         glBindVertexArray(lightCubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(1.3f, 0.58f, 6.0f));
-//        model = glm::translate(model, programState->position);
         model = glm::scale(model, glm::vec3(0.1f));
         lightCubeShader.setMat4("model", model);
         glBindVertexArray(lightCubeVAO);
@@ -575,7 +574,44 @@ int main() {
         ourShader.setMat4("model", model);
         lamboModel.Draw(ourShader);
 
+        // draw cubes for traffic lights
+        glDisable(GL_CULL_FACE);
+        lightCubeShader.use();
+        lightCubeShader.setVec3("color", glm::vec3(1.0f, 0.0f, 0.0f));
+        lightCubeShader.setMat4("projection", projection);
+        lightCubeShader.setMat4("view", view);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(5.0f, 3.9f, 5.365f));
+        model = glm::scale(model, glm::vec3(0.15f));
+        lightCubeShader.setMat4("model", model);
+        glBindVertexArray(lightCubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-5.0f, 3.9f, -5.365f));
+        model = glm::scale(model, glm::vec3(0.15f));
+        lightCubeShader.setMat4("model", model);
+        glBindVertexArray(lightCubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        lightCubeShader.setVec3("color", glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-5.365f, 3.35f, 5.0f));
+        model = glm::scale(model, glm::vec3(0.15f));
+        lightCubeShader.setMat4("model", model);
+        glBindVertexArray(lightCubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(5.365f, 3.35f, -5.0f));
+//        model = glm::translate(model, programState->position);
+        model = glm::scale(model, glm::vec3(0.15f));
+        lightCubeShader.setMat4("model", model);
+        glBindVertexArray(lightCubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glEnable(GL_CULL_FACE);
+
+
         // render the traffic lights
+        ourShader.use();
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(5.0, 0.0, 5.0));
         model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
