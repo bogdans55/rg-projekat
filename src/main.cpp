@@ -327,6 +327,7 @@ int main() {
 
     // load textures
     unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass/aerial_grass_rock_diff_4k.jpg").c_str());
+    unsigned int planeTextureSpec = loadTexture(FileSystem::getPath("resources/textures/grass/aerial_grass_rock_spec_4k.jpg").c_str());
     unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass_filtered.png").c_str());
     unsigned int trackTexture = loadTexture(FileSystem::getPath("resources/textures/track.jpg").c_str());
 
@@ -496,6 +497,8 @@ int main() {
         glBindVertexArray(planeVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, planeTexture);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, planeTextureSpec);
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
         model = glm::mat4(1.0f);
@@ -517,6 +520,8 @@ int main() {
         ourShader.setMat4("view", view);
         glBindVertexArray(planeVAO);
         glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, trackTexture);
+        glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, trackTexture);
         ourShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
