@@ -153,7 +153,7 @@ int main() {
 
     // glfw window creation
     // --------------------
-    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Crossroad", NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -204,7 +204,7 @@ int main() {
 
     // build and compile shaders
     // -------------------------
-    Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
+    Shader lightingShader("resources/shaders/lightingShader.vs", "resources/shaders/lightingShader.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
     Shader blendingShader("resources/shaders/blendingShader.vs", "resources/shaders/blendingShader.fs");
     Shader lightCubeShader("resources/shaders/light_cube.vs", "resources/shaders/light_cube.fs");
@@ -329,22 +329,22 @@ int main() {
     Model trafficLightModel("resources/objects/traffic_light/traffic_light.obj");
     trafficLightModel.SetShaderTextureNamePrefix("material.");
 
-    PointLight& pointLight1 = programState->pointLight1;
-    pointLight1.position = glm::vec3(5.0, 3.9, 5.365);
-    pointLight1.ambient = glm::vec3(1.0f, 0.0f, 0.0f);
-    pointLight1.diffuse = glm::vec3(0.6, 0.0, 0.0);
-    pointLight1.specular = glm::vec3(0.8, 0.0, 0.0);
-    pointLight1.constant = 1.0f;
-    pointLight1.linear = 1.0f;
-    pointLight1.quadratic = 1.0f;
-
-    DirLight& dirLight = programState->dirLight;
-    dirLight.direction = glm::vec3(0.3f, -0.75f, -0.6f);
-    dirLight.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
-    dirLight.diffuse = glm::vec3(0.25f, 0.25f, 0.25f);
-    dirLight.specular = glm::vec3(0.3f, 0.3f, 0.3f);
-
-    SpotLight& spotLight1 = programState->spotLight1;
+//    PointLight& pointLight1 = programState->pointLight1;
+//    pointLight1.position = glm::vec3(5.0, 3.9, 5.365);
+//    pointLight1.ambient = glm::vec3(1.0f, 0.0f, 0.0f);
+//    pointLight1.diffuse = glm::vec3(0.6, 0.0, 0.0);
+//    pointLight1.specular = glm::vec3(0.8, 0.0, 0.0);
+//    pointLight1.constant = 1.0f;
+//    pointLight1.linear = 1.0f;
+//    pointLight1.quadratic = 1.0f;
+//
+//    DirLight& dirLight = programState->dirLight;
+//    dirLight.direction = glm::vec3(0.3f, -0.75f, -0.6f);
+//    dirLight.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
+//    dirLight.diffuse = glm::vec3(0.25f, 0.25f, 0.25f);
+//    dirLight.specular = glm::vec3(0.3f, 0.3f, 0.3f);
+//
+//    SpotLight& spotLight1 = programState->spotLight1;
 //    spotLight1.position = glm::vec3(2.0f, 0.5f, 5.0f);
 
     // skybox VAO
@@ -466,9 +466,9 @@ int main() {
     blendingShader.use();
     blendingShader.setInt("texture1", 0);
 
-    ourShader.use();
-    ourShader.setInt("material.diffuse", 0);
-    ourShader.setInt("material.specular", 1);
+    lightingShader.use();
+    lightingShader.setInt("material.diffuse", 0);
+    lightingShader.setInt("material.specular", 1);
 
     // draw in wireframe
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -494,102 +494,88 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
-        ourShader.use();
-//        pointLight1.position = glm::vec3(0.0, 4.0, 0.0);
-//        ourShader.setVec3("pointLight1.position", pointLight1.position);
-//        ourShader.setVec3("pointLight1.ambient", pointLight1.ambient);
-//        ourShader.setVec3("pointLight1.diffuse", pointLight1.diffuse);
-//        ourShader.setVec3("pointLight1.specular", pointLight1.specular);
-//        ourShader.setFloat("pointLight1.constant", pointLight1.constant);
-//        ourShader.setFloat("pointLight1.linear", pointLight1.linear);
-//        ourShader.setFloat("pointLight1.quadratic", pointLight1.quadratic);
-        ourShader.setVec3("viewPosition", programState->camera.Position);
-        ourShader.setFloat("material.shininess", 32.0f);
+        lightingShader.use();
+        lightingShader.setVec3("viewPosition", programState->camera.Position);
+        lightingShader.setFloat("material.shininess", 32.0f);
+
         // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
-                                                (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),(float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = programState->camera.GetViewMatrix();
         glm::mat4 model = glm::mat4(1.0f);
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
+        lightingShader.setMat4("projection", projection);
+        lightingShader.setMat4("view", view);
 
 
         // dir light
-        ourShader.setVec3("dirLight.direction", dirLight.direction);
-        ourShader.setVec3("dirLight.ambient", dirLight.ambient);
-        ourShader.setVec3("dirLight.diffuse", dirLight.diffuse);
-        ourShader.setVec3("dirLight.specular", dirLight.specular);
-
-        ourShader.setVec3("pointLight.ambient", glm::vec3(0));
-        ourShader.setVec3("pointLight.diffuse", glm::vec3(0));
-        ourShader.setVec3("pointLight.specular", glm::vec3(0));
-
+        lightingShader.setVec3("dirLight.direction", 0.3f, -0.75f, -0.6f);
+        lightingShader.setVec3("dirLight.ambient", 0.1f, 0.1f, 0.1f);
+        lightingShader.setVec3("dirLight.diffuse", 0.25f, 0.25f, 0.25f);
+        lightingShader.setVec3("dirLight.specular", 0.3f, 0.3f, 0.3f);
 
         // spotLight
-        ourShader.setVec3("spotLight1.position", 2.68f, 0.58f, 6.0f);
-        ourShader.setVec3("spotLight1.direction", 0.0f, 0.0f, -1.0f);
-        ourShader.setVec3("spotLight1.ambient", 0.0f, 0.0f, 0.0f);
-        ourShader.setVec3("spotLight1.diffuse", 1.0f, 1.0f, 1.0f);
-        ourShader.setVec3("spotLight1.specular", 1.0f, 1.0f, 1.0f);
-        ourShader.setFloat("spotLight1.constant", 1.0f);
-        ourShader.setFloat("spotLight1.linear", 0.09);
-        ourShader.setFloat("spotLight1.quadratic", 0.032);
-        ourShader.setFloat("spotLight1.cutOff", glm::cos(glm::radians(6.0f)));
-        ourShader.setFloat("spotLight1.outerCutOff", glm::cos(glm::radians(8.0f)));
+        lightingShader.setVec3("spotLight1.position", 2.68f, 0.58f, 6.0f);
+        lightingShader.setVec3("spotLight1.direction", 0.0f, 0.0f, -1.0f);
+        lightingShader.setVec3("spotLight1.ambient", 0.0f, 0.0f, 0.0f);
+        lightingShader.setVec3("spotLight1.diffuse", 1.0f, 1.0f, 1.0f);
+        lightingShader.setVec3("spotLight1.specular", 1.0f, 1.0f, 1.0f);
+        lightingShader.setFloat("spotLight1.constant", 1.0f);
+        lightingShader.setFloat("spotLight1.linear", 0.09);
+        lightingShader.setFloat("spotLight1.quadratic", 0.032);
+        lightingShader.setFloat("spotLight1.cutOff", glm::cos(glm::radians(6.0f)));
+        lightingShader.setFloat("spotLight1.outerCutOff", glm::cos(glm::radians(8.0f)));
 
-        ourShader.setVec3("spotLight2.position", 1.3f, 0.58f, 6.0f);
-        ourShader.setVec3("spotLight2.direction", 0.0f, 0.0f, -1.0f);
-        ourShader.setVec3("spotLight2.ambient", 0.0f, 0.0f, 0.0f);
-        ourShader.setVec3("spotLight2.diffuse", 1.0f, 1.0f, 1.0f);
-        ourShader.setVec3("spotLight2.specular", 1.0f, 1.0f, 1.0f);
-        ourShader.setFloat("spotLight2.constant", 1.0f);
-        ourShader.setFloat("spotLight2.linear", 0.09);
-        ourShader.setFloat("spotLight2.quadratic", 0.032);
-        ourShader.setFloat("spotLight2.cutOff", glm::cos(glm::radians(6.0f)));
-        ourShader.setFloat("spotLight2.outerCutOff", glm::cos(glm::radians(8.0f)));
+        lightingShader.setVec3("spotLight2.position", 1.3f, 0.58f, 6.0f);
+        lightingShader.setVec3("spotLight2.direction", 0.0f, 0.0f, -1.0f);
+        lightingShader.setVec3("spotLight2.ambient", 0.0f, 0.0f, 0.0f);
+        lightingShader.setVec3("spotLight2.diffuse", 1.0f, 1.0f, 1.0f);
+        lightingShader.setVec3("spotLight2.specular", 1.0f, 1.0f, 1.0f);
+        lightingShader.setFloat("spotLight2.constant", 1.0f);
+        lightingShader.setFloat("spotLight2.linear", 0.09);
+        lightingShader.setFloat("spotLight2.quadratic", 0.032);
+        lightingShader.setFloat("spotLight2.cutOff", glm::cos(glm::radians(6.0f)));
+        lightingShader.setFloat("spotLight2.outerCutOff", glm::cos(glm::radians(8.0f)));
 
 
         // pointLights (traffic lights)
-        ourShader.setVec3("pointLight1.position", pointLight1.position);
-        ourShader.setVec3("pointLight1.ambient", pointLight1.ambient);
-        ourShader.setVec3("pointLight1.diffuse", pointLight1.diffuse);
-        ourShader.setVec3("pointLight1.specular", pointLight1.specular);
-        ourShader.setFloat("pointLight1.constant", pointLight1.constant);
-        ourShader.setFloat("pointLight1.linear", pointLight1.linear);
-        ourShader.setFloat("pointLight1.quadratic", pointLight1.quadratic);
-        ourShader.setVec3("viewPosition", programState->camera.Position);
-        ourShader.setFloat("material.shininess", 32.0f);
+        lightingShader.setVec3("pointLight1.position", 5.0, 3.9, 5.365);
+        lightingShader.setVec3("pointLight1.ambient", 1.0f, 0.0f, 0.0f);
+        lightingShader.setVec3("pointLight1.diffuse", 0.6f, 0.0f, 0.0f);
+        lightingShader.setVec3("pointLight1.specular", 0.8f, 0.0f, 0.0f);
+        lightingShader.setFloat("pointLight1.constant", 1);
+        lightingShader.setFloat("pointLight1.linear", 1);
+        lightingShader.setFloat("pointLight1.quadratic", 1);
+        lightingShader.setVec3("viewPosition", programState->camera.Position);
+        lightingShader.setFloat("material.shininess", 32.0f);
 
-        ourShader.setVec3("pointLight2.position", glm::vec3(-5.0f, 3.9f, -5.365));
-        ourShader.setVec3("pointLight2.ambient", glm::vec3(1.0f, 0.0f, 0.0));
-        ourShader.setVec3("pointLight2.diffuse", glm::vec3(0.6f, 0.0f, 0.0f));
-        ourShader.setVec3("pointLight2.specular", glm::vec3(0.8f, 0.0f, 0.0));
-        ourShader.setFloat("pointLight2.constant", 1);
-        ourShader.setFloat("pointLight2.linear", 1);
-        ourShader.setFloat("pointLight2.quadratic", 1);
-        ourShader.setVec3("viewPosition", programState->camera.Position);
-        ourShader.setFloat("material.shininess", 32.0f);
+        lightingShader.setVec3("pointLight2.position", glm::vec3(-5.0f, 3.9f, -5.365));
+        lightingShader.setVec3("pointLight2.ambient", glm::vec3(1.0f, 0.0f, 0.0));
+        lightingShader.setVec3("pointLight2.diffuse", glm::vec3(0.6f, 0.0f, 0.0f));
+        lightingShader.setVec3("pointLight2.specular", glm::vec3(0.8f, 0.0f, 0.0));
+        lightingShader.setFloat("pointLight2.constant", 1);
+        lightingShader.setFloat("pointLight2.linear", 1);
+        lightingShader.setFloat("pointLight2.quadratic", 1);
+        lightingShader.setVec3("viewPosition", programState->camera.Position);
+        lightingShader.setFloat("material.shininess", 32.0f);
 
-        ourShader.setVec3("pointLight3.position", glm::vec3(-5.365f, 3.35f, 5.0));
-        ourShader.setVec3("pointLight3.ambient", glm::vec3(0.0f, 1.0f, 0.0));
-        ourShader.setVec3("pointLight3.diffuse", glm::vec3(0.0f, 0.6f, 0.0f));
-        ourShader.setVec3("pointLight3.specular", glm::vec3(0.0f, 0.8f, 0.0));
-        ourShader.setFloat("pointLight3.constant", 1);
-        ourShader.setFloat("pointLight3.linear", 1);
-        ourShader.setFloat("pointLight3.quadratic", 1);
-        ourShader.setVec3("viewPosition", programState->camera.Position);
-        ourShader.setFloat("material.shininess", 32.0f);
+        lightingShader.setVec3("pointLight3.position", glm::vec3(-5.365f, 3.35f, 5.0));
+        lightingShader.setVec3("pointLight3.ambient", glm::vec3(0.0f, 1.0f, 0.0));
+        lightingShader.setVec3("pointLight3.diffuse", glm::vec3(0.0f, 0.6f, 0.0f));
+        lightingShader.setVec3("pointLight3.specular", glm::vec3(0.0f, 0.8f, 0.0));
+        lightingShader.setFloat("pointLight3.constant", 1);
+        lightingShader.setFloat("pointLight3.linear", 1);
+        lightingShader.setFloat("pointLight3.quadratic", 1);
+        lightingShader.setVec3("viewPosition", programState->camera.Position);
+        lightingShader.setFloat("material.shininess", 32.0f);
 
-        ourShader.setVec3("pointLight4.position", glm::vec3(5.365f, 3.35f, -5.0));
-        ourShader.setVec3("pointLight4.ambient", glm::vec3(0.0f, 1.0f, 0.0));
-        ourShader.setVec3("pointLight4.diffuse", glm::vec3(0.0f, 0.6f, 0.0f));
-        ourShader.setVec3("pointLight4.specular", glm::vec3(0.0f, 0.8f, 0.0));
-        ourShader.setFloat("pointLight4.constant", 1);
-        ourShader.setFloat("pointLight4.linear", 1);
-        ourShader.setFloat("pointLight4.quadratic", 1);
-        ourShader.setVec3("viewPosition", programState->camera.Position);
-        ourShader.setFloat("material.shininess", 32.0f);
-
+        lightingShader.setVec3("pointLight4.position", glm::vec3(5.365f, 3.35f, -5.0));
+        lightingShader.setVec3("pointLight4.ambient", glm::vec3(0.0f, 1.0f, 0.0));
+        lightingShader.setVec3("pointLight4.diffuse", glm::vec3(0.0f, 0.6f, 0.0f));
+        lightingShader.setVec3("pointLight4.specular", glm::vec3(0.0f, 0.8f, 0.0));
+        lightingShader.setFloat("pointLight4.constant", 1);
+        lightingShader.setFloat("pointLight4.linear", 1);
+        lightingShader.setFloat("pointLight4.quadratic", 1);
+        lightingShader.setVec3("viewPosition", programState->camera.Position);
+        lightingShader.setFloat("material.shininess", 32.0f);
 
         // draw cubes for headlights
         glDisable(GL_CULL_FACE);
@@ -612,13 +598,13 @@ int main() {
         glEnable(GL_CULL_FACE);
 
         // render the lambo
-        ourShader.use();
+        lightingShader.use();
         model = glm::mat4(1.0f);
         model = glm::translate(model,glm::vec3(2.0f, 0.0f, 8.0f));
         model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.01f));
-        ourShader.setMat4("model", model);
-        lamboModel.Draw(ourShader);
+        lightingShader.setMat4("model", model);
+        lamboModel.Draw(lightingShader);
 
         // draw cubes for traffic lights
         glDisable(GL_CULL_FACE);
@@ -657,27 +643,27 @@ int main() {
 
 
         // render the traffic lights
-        ourShader.use();
+        lightingShader.use();
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(5.0, 0.0, 5.0));
         model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ourShader.setMat4("model", model);
-        trafficLightModel.Draw(ourShader);
+        lightingShader.setMat4("model", model);
+        trafficLightModel.Draw(lightingShader);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(5.0, 0.0, -5.0));
-//        model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ourShader.setMat4("model", model);
-        trafficLightModel.Draw(ourShader);
+        // model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        lightingShader.setMat4("model", model);
+        trafficLightModel.Draw(lightingShader);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(-5.0, 0.0, 5.0));
         model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ourShader.setMat4("model", model);
-        trafficLightModel.Draw(ourShader);
+        lightingShader.setMat4("model", model);
+        trafficLightModel.Draw(lightingShader);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(-5.0, 0.0, -5.0));
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ourShader.setMat4("model", model);
-        trafficLightModel.Draw(ourShader);
+        lightingShader.setMat4("model", model);
+        trafficLightModel.Draw(lightingShader);
 
         // draw skybox
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -694,7 +680,7 @@ int main() {
         glDepthFunc(GL_LESS); // set depth function back to default
 
         // draw plane
-        ourShader.use();
+        lightingShader.use();
         glBindVertexArray(planeVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, planeTexture);
@@ -704,43 +690,43 @@ int main() {
         view = programState->camera.GetViewMatrix();
         model = glm::mat4(1.0f);
         model = glm::scale(model, glm::vec3(50.0f, 1.0f, 50.0f));
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
-        ourShader.setMat4("model", model);
+        lightingShader.setMat4("projection", projection);
+        lightingShader.setMat4("view", view);
+        lightingShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // draw track
-        ourShader.use();
+        lightingShader.use();
         // positioning
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.001f, 0.0f));
+        model = glm::translate(model, glm::vec3(0.0f, 0.005f, 0.0f));
         model = glm::scale(model, glm::vec3(50.0f, 1.0f, 4.0f));
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
+        lightingShader.setMat4("projection", projection);
+        lightingShader.setMat4("view", view);
         glBindVertexArray(planeVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, trackTexture);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, trackTexture);
-        ourShader.setMat4("model", model);
+        lightingShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.002f, 0.0f));
+        model = glm::translate(model, glm::vec3(0.0f, 0.009f, 0.0f));
         model = glm::scale(model, glm::vec3(4.0f, 1.0f, 50.0f));
         glBindVertexArray(trackVAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, trackTexture);
-        ourShader.setMat4("model", model);
+        lightingShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // draw grass
         blendingShader.use();
-        blendingShader.setVec3("dirLight.direction", dirLight.direction);
-        blendingShader.setVec3("dirLight.ambient", dirLight.ambient);
-        blendingShader.setVec3("dirLight.diffuse", dirLight.diffuse);
-        blendingShader.setVec3("dirLight.specular", dirLight.specular);
+        blendingShader.setVec3("dirLight.direction", 0.3f, -0.75f, -0.6f);
+        blendingShader.setVec3("dirLight.ambient", 0.1f, 0.1f, 0.1f);
+        blendingShader.setVec3("dirLight.diffuse", 0.25f, 0.25f, 0.25f);
+        blendingShader.setVec3("dirLight.specular", 0.3f, 0.3f, 0.3f);
         blendingShader.setVec3("viewPosition", programState->camera.Position);
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
@@ -780,10 +766,12 @@ int main() {
     glDeleteVertexArrays(1, &planeVAO);
     glDeleteVertexArrays(1, &trackVAO);
     glDeleteVertexArrays(1, &transparentVAO);
+    glDeleteVertexArrays(1, &lightCubeVAO);
     glDeleteBuffers(1, &skyboxVAO);
     glDeleteBuffers(1, &planeVAO);
     glDeleteBuffers(1, &trackVAO);
     glDeleteBuffers(1, &transparentVAO);
+    glDeleteBuffers(1, &lightCubeVAO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
@@ -853,15 +841,9 @@ void DrawImGui(ProgramState *programState) {
     {
         static float f = 0.0f;
         ImGui::Begin("Hello window");
-//        ImGui::Text("Hello text");
-//        ImGui::SliderFloat("Float slider", &f, 0.0, 1.0);
-//        ImGui::ColorEdit3("Background color", (float *) &programState->clearColor);
+
         ImGui::DragFloat3("Model position", (float*)&programState->position);
         ImGui::DragFloat("Model scale", &programState->scale, 0.05, 0.1, 4.0);
-
-        ImGui::DragFloat("pointLight.constant", &programState->pointLight1.constant, 0.05, 0.0, 1.0);
-        ImGui::DragFloat("pointLight.linear", &programState->pointLight1.linear, 0.05, 0.0, 1.0);
-        ImGui::DragFloat("pointLight.quadratic", &programState->pointLight1.quadratic, 0.05, 0.0, 1.0);
 
         ImGui::End();
     }
