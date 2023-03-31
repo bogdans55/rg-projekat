@@ -187,8 +187,6 @@ int main() {
     // -------------------------
     Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
-    Shader textureShader("resources/shaders/texture.vs", "resources/shaders/texture.fs");
-    Shader colorShader("resources/shaders/color.vs", "resources/shaders/color.fs");
     Shader blendingShader("resources/shaders/blendingShader.vs", "resources/shaders/blendingShader.fs");
 
     float skyboxVertices[] = {
@@ -256,51 +254,6 @@ int main() {
             0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
             1.0f, -0.5f,  0.0f,  1.0f,  1.0f,
             1.0f,  0.5f,  0.0f,  1.0f,  0.0f
-    };
-
-    float cubeVertices[] = {
-            // positions                        // normals                   // texture coords
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-            0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-            0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-            0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-            0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-            0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-            0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-            0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-            0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
     };
 
     // load models
@@ -371,22 +324,11 @@ int main() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glBindVertexArray(0);
-    // cube VAO
-    unsigned int cubeVBO, cubeVAO;
-    glGenVertexArrays(1, &cubeVAO);
-    glGenBuffers(1, &cubeVBO);
-    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
-    glBindVertexArray(cubeVAO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
 
     // load textures
-//    unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass1.jpg").c_str());
-//    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass.png").c_str());
     unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass/aerial_grass_rock_diff_4k.jpg").c_str());
     unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass_filtered.png").c_str());
-//    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass_fltr.png").c_str());
+    unsigned int trackTexture = loadTexture(FileSystem::getPath("resources/textures/track.jpg").c_str());
 
     // skybox textures
     stbi_set_flip_vertically_on_load(false);
@@ -442,9 +384,6 @@ int main() {
 //    shader configuration
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
-
-    textureShader.use();
-    textureShader.setInt("texture1", 0);
 
     blendingShader.use();
     blendingShader.setInt("texture1", 0);
@@ -567,37 +506,27 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // draw track
-        colorShader.use();
-        colorShader.setVec3("objectColor", 0.2, 0.2, 0.2);
-        colorShader.setVec3("light.position", pointLight.position);
-        colorShader.setVec3("viewPos", programState->camera.Position);
-        colorShader.setVec3("aNormal", 0.0, 1.0, 0.0);
-        // light properties
-        glm::vec3 lightColor = glm::vec3(1.0f);
-        colorShader.setVec3("light.ambient", pointLight.ambient);
-        colorShader.setVec3("light.diffuse", pointLight.diffuse);
-        colorShader.setVec3("light.specular", pointLight.specular);
-        // material properties
-        colorShader.setVec3("material.ambient", 0.2f, 0.2f, 0.2f);
-        colorShader.setVec3("material.diffuse", 0.1f, 0.1f, 0.1f);
-        colorShader.setVec3("material.specular", 0.2f, 0.2f, 0.2f);
-        colorShader.setFloat("material.shininess", 10.0f);
+        ourShader.use();
         // positioning
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.001f, 0.0f));
         model = glm::scale(model, glm::vec3(50.0f, 1.0f, 4.0f));
-        colorShader.setMat4("projection", projection);
-        colorShader.setMat4("view", view);
-        glBindVertexArray(trackVAO);
-        colorShader.setMat4("model", model);
+        ourShader.setMat4("projection", projection);
+        ourShader.setMat4("view", view);
+        glBindVertexArray(planeVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, trackTexture);
+        ourShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.001f, 0.0f));
+        model = glm::translate(model, glm::vec3(0.0f, 0.002f, 0.0f));
         model = glm::scale(model, glm::vec3(4.0f, 1.0f, 50.0f));
         glBindVertexArray(trackVAO);
-        colorShader.setMat4("model", model);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, trackTexture);
+        ourShader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // draw grass
