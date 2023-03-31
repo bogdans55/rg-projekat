@@ -62,6 +62,20 @@ struct DirLight {
     glm::vec3 diffuse;
     glm::vec3 specular;
 };
+struct SpotLight {
+    glm::vec3 position;
+    glm::vec3 direction;
+    float cutOff;
+    float outerCutOff;
+
+    float constant;
+    float linear;
+    float quadratic;
+
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+};
 
 struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
@@ -72,6 +86,8 @@ struct ProgramState {
     float scale = 1.0f;
     PointLight pointLight;
     DirLight dirLight;
+    SpotLight spotLight1;
+    SpotLight spotLight2;
     ProgramState()
             : camera(glm::vec3(0.0f, 0.0f, 3.0f)) {}
 
@@ -188,6 +204,7 @@ int main() {
     Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
     Shader blendingShader("resources/shaders/blendingShader.vs", "resources/shaders/blendingShader.fs");
+    Shader lightCubeShader("resources/shaders/light_cube.vs", "resources/shaders/light_cube.fs");
 
     float skyboxVertices[] = {
             // positions
@@ -256,6 +273,51 @@ int main() {
             1.0f,  0.5f,  0.0f,  1.0f,  0.0f
     };
 
+    float cubeVertices[] = {
+            // positions          // normals           // texture coords
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+            0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+            0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+            0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
+    };
+
     // load models
     // -----------
     stbi_set_flip_vertically_on_load(false);
@@ -278,6 +340,9 @@ int main() {
     dirLight.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
     dirLight.diffuse = glm::vec3(0.25f, 0.25f, 0.25f);
     dirLight.specular = glm::vec3(0.3f, 0.3f, 0.3f);
+
+    SpotLight& spotLight1 = programState->spotLight1;
+//    spotLight1.position = glm::vec3(2.0f, 0.5f, 5.0f);
 
     // skybox VAO
     unsigned int skyboxVAO, skyboxVBO;
@@ -324,6 +389,15 @@ int main() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glBindVertexArray(0);
+    // cube VAO
+    unsigned int lightCubeVAO, lightCubeVBO;
+    glGenVertexArrays(1, &lightCubeVAO);
+    glBindVertexArray(lightCubeVAO);
+    glGenBuffers(1, &lightCubeVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, lightCubeVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
     // load textures
     unsigned int planeTexture = loadTexture(FileSystem::getPath("resources/textures/grass/aerial_grass_rock_diff_4k.jpg").c_str());
@@ -448,7 +522,52 @@ int main() {
         ourShader.setVec3("pointLight.specular", glm::vec3(0));
 
 
+        // spotLight
+        ourShader.setVec3("spotLight1.position", 2.68f, 0.58f, 6.0f);
+        ourShader.setVec3("spotLight1.direction", 0.0f, 0.0f, -1.0f);
+        ourShader.setVec3("spotLight1.ambient", 0.0f, 0.0f, 0.0f);
+        ourShader.setVec3("spotLight1.diffuse", 1.0f, 1.0f, 1.0f);
+        ourShader.setVec3("spotLight1.specular", 1.0f, 1.0f, 1.0f);
+        ourShader.setFloat("spotLight1.constant", 1.0f);
+        ourShader.setFloat("spotLight1.linear", 0.09);
+        ourShader.setFloat("spotLight1.quadratic", 0.032);
+        ourShader.setFloat("spotLight1.cutOff", glm::cos(glm::radians(6.0f)));
+        ourShader.setFloat("spotLight1.outerCutOff", glm::cos(glm::radians(8.0f)));
+
+        ourShader.setVec3("spotLight2.position", 1.3f, 0.58f, 6.0f);
+        ourShader.setVec3("spotLight2.direction", 0.0f, 0.0f, -1.0f);
+        ourShader.setVec3("spotLight2.ambient", 0.0f, 0.0f, 0.0f);
+        ourShader.setVec3("spotLight2.diffuse", 1.0f, 1.0f, 1.0f);
+        ourShader.setVec3("spotLight2.specular", 1.0f, 1.0f, 1.0f);
+        ourShader.setFloat("spotLight2.constant", 1.0f);
+        ourShader.setFloat("spotLight2.linear", 0.09);
+        ourShader.setFloat("spotLight2.quadratic", 0.032);
+        ourShader.setFloat("spotLight2.cutOff", glm::cos(glm::radians(6.0f)));
+        ourShader.setFloat("spotLight2.outerCutOff", glm::cos(glm::radians(8.0f)));
+
+        // draw cubes for headlights
+        glDisable(GL_CULL_FACE);
+        lightCubeShader.use();
+        lightCubeShader.setMat4("projection", projection);
+        lightCubeShader.setMat4("view", view);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(2.68f, 0.58f, 6.0f));
+//        model = glm::translate(model, programState->position);
+        model = glm::scale(model, glm::vec3(0.1f));
+        lightCubeShader.setMat4("model", model);
+        glBindVertexArray(lightCubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(1.3f, 0.58f, 6.0f));
+//        model = glm::translate(model, programState->position);
+        model = glm::scale(model, glm::vec3(0.1f));
+        lightCubeShader.setMat4("model", model);
+        glBindVertexArray(lightCubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glEnable(GL_CULL_FACE);
+
         // render the lambo
+        ourShader.use();
         model = glm::mat4(1.0f);
         model = glm::translate(model,glm::vec3(2.0f, 0.0f, 8.0f));
         model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -665,6 +784,7 @@ void DrawImGui(ProgramState *programState) {
         ImGui::DragFloat3("Model position", (float*)&programState->position);
         ImGui::DragFloat("Model scale", &programState->scale, 0.05, 0.1, 4.0);
 
+        ImGui::DragFloat3("spotLight.position", (float*)&programState->spotLight1.position, 0.05);
         ImGui::DragFloat3("dirLight.direction", (float*)&programState->dirLight.direction, 0.05);
         ImGui::DragFloat3("dirLight.ambient", (float*)&programState->dirLight.ambient, 0.05, 0.0, 1.0);
         ImGui::DragFloat3("dirLight.diffuse", (float*)&programState->dirLight.diffuse, 0.05, 0.0, 1.0);
