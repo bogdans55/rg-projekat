@@ -86,13 +86,6 @@ struct ProgramState {
     bool CameraMouseMovementUpdateEnabled = true;
     glm::vec3 position = glm::vec3(0.0f);
     float scale = 1.0f;
-    DirLight dirLight;
-    SpotLight spotLight1;
-    SpotLight spotLight2;
-    PointLight pointLight1;
-    PointLight pointLight2;
-    PointLight pointLight3;
-    PointLight pointLight4;
     ProgramState()
             : camera(glm::vec3(0.0f, 0.0f, 3.0f)) {}
 
@@ -334,8 +327,6 @@ int main() {
             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
     };
 
-
-
     // load models
     // -----------
     stbi_set_flip_vertically_on_load(false);
@@ -343,24 +334,6 @@ int main() {
     lamboModel.SetShaderTextureNamePrefix("material.");
     Model trafficLightModel("resources/objects/traffic_light/traffic_light.obj");
     trafficLightModel.SetShaderTextureNamePrefix("material.");
-
-//    PointLight& pointLight1 = programState->pointLight1;
-//    pointLight1.position = glm::vec3(5.0, 3.9, 5.365);
-//    pointLight1.ambient = glm::vec3(1.0f, 0.0f, 0.0f);
-//    pointLight1.diffuse = glm::vec3(0.6, 0.0, 0.0);
-//    pointLight1.specular = glm::vec3(0.8, 0.0, 0.0);
-//    pointLight1.constant = 1.0f;
-//    pointLight1.linear = 1.0f;
-//    pointLight1.quadratic = 1.0f;
-//
-//    DirLight& dirLight = programState->dirLight;
-//    dirLight.direction = glm::vec3(0.3f, -0.75f, -0.6f);
-//    dirLight.ambient = glm::vec3(0.1f, 0.1f, 0.1f);
-//    dirLight.diffuse = glm::vec3(0.25f, 0.25f, 0.25f);
-//    dirLight.specular = glm::vec3(0.3f, 0.3f, 0.3f);
-//
-//    SpotLight& spotLight1 = programState->spotLight1;
-//    spotLight1.position = glm::vec3(2.0f, 0.5f, 5.0f);
 
     // configure (floating point) framebuffers
     // ---------------------------------------
@@ -491,13 +464,6 @@ int main() {
     stbi_set_flip_vertically_on_load(false);
     vector<std::string> faces
             {
-//                    FileSystem::getPath("resources/textures/skybox_day/right.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox_day/left.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox_day/top.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox_day/bottom.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox_day/front.jpg"),
-//                    FileSystem::getPath("resources/textures/skybox_day/back.jpg")
-
                     FileSystem::getPath("resources/textures/skybox_night/right.jpg"),
                     FileSystem::getPath("resources/textures/skybox_night/left.jpg"),
                     FileSystem::getPath("resources/textures/skybox_night/top.jpg"),
@@ -538,7 +504,7 @@ int main() {
         vegetation.push_back(pos);
     }
 
-//    shader configuration
+    // shader configuration
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
 
@@ -564,13 +530,6 @@ int main() {
         // input
         // -----
         processInput(window);
-
-
-        // render
-        // ------
-//        glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
-//        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // 1. render scene into floating point framebuffer
         // -----------------------------------------------
@@ -626,8 +585,8 @@ int main() {
         lightingShader.setVec3("pointLight1.diffuse", 0.6f, 0.0f, 0.0f);
         lightingShader.setVec3("pointLight1.specular", 0.8f, 0.0f, 0.0f);
         lightingShader.setFloat("pointLight1.constant", 1);
-        lightingShader.setFloat("pointLight1.linear", 1);
-        lightingShader.setFloat("pointLight1.quadratic", 1);
+        lightingShader.setFloat("pointLight1.linear", 2);
+        lightingShader.setFloat("pointLight1.quadratic", 3);
         lightingShader.setVec3("viewPosition", programState->camera.Position);
         lightingShader.setFloat("material.shininess", 32.0f);
 
@@ -636,8 +595,8 @@ int main() {
         lightingShader.setVec3("pointLight2.diffuse", glm::vec3(0.6f, 0.0f, 0.0f));
         lightingShader.setVec3("pointLight2.specular", glm::vec3(0.8f, 0.0f, 0.0));
         lightingShader.setFloat("pointLight2.constant", 1);
-        lightingShader.setFloat("pointLight2.linear", 1);
-        lightingShader.setFloat("pointLight2.quadratic", 1);
+        lightingShader.setFloat("pointLight2.linear", 2);
+        lightingShader.setFloat("pointLight2.quadratic", 3);
         lightingShader.setVec3("viewPosition", programState->camera.Position);
         lightingShader.setFloat("material.shininess", 32.0f);
 
@@ -646,8 +605,8 @@ int main() {
         lightingShader.setVec3("pointLight3.diffuse", glm::vec3(0.0f, 0.6f, 0.0f));
         lightingShader.setVec3("pointLight3.specular", glm::vec3(0.0f, 0.8f, 0.0));
         lightingShader.setFloat("pointLight3.constant", 1);
-        lightingShader.setFloat("pointLight3.linear", 1);
-        lightingShader.setFloat("pointLight3.quadratic", 1);
+        lightingShader.setFloat("pointLight3.linear", 2);
+        lightingShader.setFloat("pointLight3.quadratic", 3);
         lightingShader.setVec3("viewPosition", programState->camera.Position);
         lightingShader.setFloat("material.shininess", 32.0f);
 
@@ -656,8 +615,8 @@ int main() {
         lightingShader.setVec3("pointLight4.diffuse", glm::vec3(0.0f, 0.6f, 0.0f));
         lightingShader.setVec3("pointLight4.specular", glm::vec3(0.0f, 0.8f, 0.0));
         lightingShader.setFloat("pointLight4.constant", 1);
-        lightingShader.setFloat("pointLight4.linear", 1);
-        lightingShader.setFloat("pointLight4.quadratic", 1);
+        lightingShader.setFloat("pointLight4.linear", 2);
+        lightingShader.setFloat("pointLight4.quadratic", 3);
         lightingShader.setVec3("viewPosition", programState->camera.Position);
         lightingShader.setFloat("material.shininess", 32.0f);
 
@@ -781,7 +740,6 @@ int main() {
 
         // draw track
         lightingShader.use();
-        // positioning
         projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         view = programState->camera.GetViewMatrix();
         model = glm::mat4(1.0f);
@@ -958,15 +916,15 @@ void DrawImGui(ProgramState *programState) {
     ImGui::NewFrame();
 
 
-    {
-        static float f = 0.0f;
-        ImGui::Begin("Hello window");
-
-        ImGui::DragFloat3("Model position", (float*)&programState->position);
-        ImGui::DragFloat("Model scale", &programState->scale, 0.05, 0.1, 4.0);
-
-        ImGui::End();
-    }
+//    {
+//        static float f = 0.0f;
+//        ImGui::Begin("Hello window");
+//
+//        ImGui::DragFloat3("Model position", (float*)&programState->position);
+//        ImGui::DragFloat("Model scale", &programState->scale, 0.05, 0.1, 4.0);
+//
+//        ImGui::End();
+//    }
 
     {
         ImGui::Begin("Camera info");
