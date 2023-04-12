@@ -33,8 +33,8 @@ unsigned int loadTexture(char const * path);
 unsigned int loadTexture(char const * path, bool gammaCorrection);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1000;
+const unsigned int SCR_HEIGHT = 750;
 
 // camera
 
@@ -558,25 +558,25 @@ int main() {
         // spotLight
         lightingShader.setVec3("spotLight1.position", 2.68f, 0.58f, 6.0f);
         lightingShader.setVec3("spotLight1.direction", 0.0f, 0.0f, -1.0f);
-        lightingShader.setVec3("spotLight1.ambient", 0.0f, 0.0f, 0.0f);
+        lightingShader.setVec3("spotLight1.ambient", 0.5f, 0.5f, 0.5f);
         lightingShader.setVec3("spotLight1.diffuse", 1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("spotLight1.specular", 1.0f, 1.0f, 1.0f);
         lightingShader.setFloat("spotLight1.constant", 1.0f);
         lightingShader.setFloat("spotLight1.linear", 0.09);
         lightingShader.setFloat("spotLight1.quadratic", 0.032);
-        lightingShader.setFloat("spotLight1.cutOff", glm::cos(glm::radians(6.0f)));
-        lightingShader.setFloat("spotLight1.outerCutOff", glm::cos(glm::radians(8.0f)));
+        lightingShader.setFloat("spotLight1.cutOff", glm::cos(glm::radians(15.0f)));
+        lightingShader.setFloat("spotLight1.outerCutOff", glm::cos(glm::radians(20.0f)));
 
         lightingShader.setVec3("spotLight2.position", 1.3f, 0.58f, 6.0f);
         lightingShader.setVec3("spotLight2.direction", 0.0f, 0.0f, -1.0f);
-        lightingShader.setVec3("spotLight2.ambient", 0.0f, 0.0f, 0.0f);
+        lightingShader.setVec3("spotLight2.ambient", 0.5f, 0.5f, 0.5f);
         lightingShader.setVec3("spotLight2.diffuse", 1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("spotLight2.specular", 1.0f, 1.0f, 1.0f);
         lightingShader.setFloat("spotLight2.constant", 1.0f);
         lightingShader.setFloat("spotLight2.linear", 0.09);
         lightingShader.setFloat("spotLight2.quadratic", 0.032);
-        lightingShader.setFloat("spotLight2.cutOff", glm::cos(glm::radians(6.0f)));
-        lightingShader.setFloat("spotLight2.outerCutOff", glm::cos(glm::radians(8.0f)));
+        lightingShader.setFloat("spotLight2.cutOff", glm::cos(glm::radians(15.0f)));
+        lightingShader.setFloat("spotLight2.outerCutOff", glm::cos(glm::radians(20.0f)));
 
 
         // pointLights (traffic lights)
