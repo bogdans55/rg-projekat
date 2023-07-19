@@ -1,7 +1,5 @@
 # rg-projekat
 
-[Video](https://youtu.be/2P-oIMkT3uM)
-
 Scene containing crossroad with four traffic lights and a car patiently waiting.
 It was made in C++ using OpenGL, GLFW and GLAD. It contains:
 - Shaders 
